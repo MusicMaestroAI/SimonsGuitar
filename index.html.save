@@ -109,7 +109,7 @@ transparent 70%);
             top: 0;
             left: -100%;
             width: 100%;
-            height: 100%;
+           width: 100%;            height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 
 255, 0.1), transparent);
             transition: left 0.6s ease;
@@ -707,30 +707,6 @@ brightness(1.2); }
     </style>
 </head>
 <body>
-<!-- Password Protection -->
-<div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 
-100%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6); 
-display: flex; justify-content: center; align-items: center; z-index: 
-10000;">
-    <div style="background: white; padding: 40px; border-radius: 20px; 
-box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; max-width: 
-400px; width: 90%;">
-        <h2 style="margin-bottom: 20px; color: #333;">🎸 Simon's Guitar 
-Practice</h2>
-        <p style="margin-bottom: 30px; color: #666;">Enter password to 
-access beta</p>
-        <input type="password" id="passwordInput" placeholder="Enter 
-password" style="width: 100%; padding: 15px; border: 2px solid #ddd; 
-border-radius: 10px; font-size: 16px; margin-bottom: 20px;">
-        <button onclick="checkPassword()" style="width: 100%; padding: 
-15px; background: #6366f1; color: white; border: none; border-radius: 
-10px; font-size: 16px; cursor: pointer;">Access App</button>
-        <div id="errorMessage" style="color: red; margin-top: 10px; 
-display: none;">Incorrect password. Please try again.</div>
-    </div>
-</div>
-
-<div id="mainApp" style="display: none;">
     <!-- Hero Section -->
     <div class="hero">
         <h1>🎸 Simon's Guitar Practice Generator</h1>
@@ -1699,37 +1675,7 @@ any module to get started.');
                 e.preventDefault();
             }
         }, { passive: false });
-    </script></div> <!-- Close mainApp div -->
-
-<script>
-function checkPassword() {
-    const password = document.getElementById('passwordInput').value;
-    const correctPassword = 'guitar2025';
-    
-    if (password === correctPassword) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        sessionStorage.setItem('authenticated', 'true');
-    } else {
-        document.getElementById('errorMessage').style.display = 'block';
-        document.getElementById('passwordInput').value = '';
-    }
-}
-
-window.onload = function() {
-    if (sessionStorage.getItem('authenticated') === 'true') {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-    }
-}
-
-document.getElementById('passwordInput').addEventListener('keypress', 
-function(e) {
-    if (e.key === 'Enter') {
-        checkPassword();
-    }
-});
-</script>
+    </script>
 </body>
 </html>
 
