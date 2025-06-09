@@ -1,0 +1,14 @@
+{
+  "name": "simons-guitar-practice-generator",
+  "version": "1.0.0",
+  "description": "Complete AI-powered guitar practice suite",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": ["guitar", "practice", "tuner", "ai", "music"],
+  "author": "Simon",
+  "license": "MIT"
+}
+

@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+user-scalable=no">
+    <title>Simon's Guitar Practice Generator</title>
+    <meta name="description" content="Complete AI-powered guitar practice 
+suite with tuner, lessons, and songwriting tools">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="manifest" 
+href="data:application/json;base64,eyJuYW1lIjoiU2ltb24ncyBHdWl0YXIgUHJhY3RpY2UgR2VuZXJhdG9yIiwic2hvcnRfbmFtZSI6Ikd1aXRhciIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiM2MzY2ZjEifQ==">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+Roboto, 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section - Matches Image 1 */
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, 
+#0f0f23 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, 
+transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(255,107,53,0.3);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 2rem;
+        }
+
+        /* Module Cards Grid - Matches Image 1 Layout */
+        .modules-container {
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 
+255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .module-card:hover::before {
+            left: 100%;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 107, 53, 0.4);
+        }
+
+        .module-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+        }
+
+        .module-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ff6b35;
+            text-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+        }
+
+        .module-description {
+            opacity: 0.9;
+            line-height: 1.6;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Flame Tuner Section - Matches Image 2 */
+        .flame-tuner-section {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            margin: 0;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .flame-tuner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(255, 255, 
+255, 0.1) 0%, transparent 50%);
+        }
+
+        .flame-tuner-section h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .guitar-visual {
+            width: min(400px, 90vw);
+            height: 250px;
+            margin: 2rem auto;
+            position: relative;
+            background: linear-gradient(45deg, #8B4513 0%, #A0522D 50%, 
+#8B4513 100%);
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .guitar-visual::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: linear-gradient(45deg, #654321, #8B4513);
+            border-radius: 20px;
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .strings {
+            position: absolute;
+            top: 50%;
+            left: 15%;
+            right: 15%;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .string {
+            height: 3px;
+            background: linear-gradient(90deg, #E8E8E8, #C0C0C0, #E8E8E8);
+            margin: 12px 0;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .flame {
+            position: absolute;
+            width: 25px;
+            height: 40px;
+            background: radial-gradient(circle, #ff6b35 0%, #ff4500 50%, 
+#ff6b35 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0;
+            animation: flicker 0.8s ease-in-out infinite alternate;
+            z-index: 4;
+        }
+
+        .flame.active {
+            opacity: 1;
+        }
+
+        .flame:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .flame:nth-child(2) { top: 15%; right: 20%; animation-delay: 0.2s; 
+}
+        .flame:nth-child(3) { bottom: 15%; left: 30%; animation-delay: 
+0.4s; }
+        .flame:nth-child(4) { bottom: 15%; right: 30%; animation-delay: 
+0.6s; }
+
+        @keyframes flicker {
+            0% { transform: rotate(-3deg) scale(1); filter: brightness(1); 
+}
+            100% { transform: rotate(3deg) scale(1.1); filter: 
+brightness(1.2); }
+        }
+
+        .tuner-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Progress Section - Matches Image 4 */
+        .progress-section {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .progress-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(255, 255, 
+255, 0.1) 0%, transparent 50%);
+        }
+
+        .progress-section h2 {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .progress-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #ff6b35;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+            width: 0%;
+            transition: width 1s ease;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+
+        /* Buttons */
+        .btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover,
+        .btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border: none;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Tab System (Hidden by default, shown when module is opened) */
+        .tab-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .tab-panel.active {
+            display: flex;
+        }
+
+        .tab-content-wrapper {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-tab {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ff6b35;
+            transition: all 0.3s ease;
+        }
+
+        .close-tab:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.8);
+        }
+
+        /* Tuner Specific Styles */
+        .tuner-container {
+            text-align: center;
+            color: white;
+        }
+
+        .tuner-circle {
+            width: 250px;
+            height: 250px;
+            border: 6px solid rgba(255, 107, 53, 0.3);
+            border-radius: 50%;
+            position: relative;
+            margin: 2rem auto;
+            background: radial-gradient(circle, #2a2a3e 0%, #1a1a2e 100%);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .tuner-needle {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            width: 4px;
+            height: 35%;
+            background: linear-gradient(to bottom, #ff4757, #ff3742);
+            border-radius: 2px;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 0.3s ease;
+            z-index: 3;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        .tuner-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: #2c3e50;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .note-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6b35;
+            margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .frequency-display {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+
+        .tuner-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            min-height: 30px;
+        }
+
+        .status-sharp { color: #ff4757; }
+        .status-flat { color: #ff6b35; }
+        .status-tuned { 
+            color: #27ae60; 
+            animation: pulse 1s infinite;
+            text-shadow: 0 0 20px rgba(39, 174, 96, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .flame-container {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+        }
+
+        .flame-container.active { display: block; }
+
+        .tuner-flame {
+            width: 15px;
+            height: 25px;
+            background: linear-gradient(to top, #ff6b35 0%, #ff8e3c 30%, 
+#ffd23f 70%, transparent 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: tunerFlicker 0.3s infinite alternate;
+            margin: 0 1px;
+            display: inline-block;
+        }
+
+        @keyframes tunerFlicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Stem Separator Styles */
+        .instrument-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instrument-selector:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .instrument-selector.active {
+            border-color: rgba(255, 107, 53, 0.5);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .instrument-toggle {
+            margin-left: auto;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .instrument-toggle.inactive {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #ff6b35;
+        }
+
+        .toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .track-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .track-icon {
+            font-size: 1.5rem;
+        }
+
+        .track-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .track-artist {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .track-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+            color: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .modules-container {
+                padding: 2rem 1rem;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .flame-tuner-section {
+                padding: 2rem 1rem;
+            }
+            
+            .guitar-visual {
+                height: 200px;
+            }
+            
+            .tuner-controls {
+                gap: 1rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+                min-width: 120px;
+            }
+            
+            .progress-section {
+                padding: 2rem 1rem;
+            }
+            
+            .tab-content-wrapper {
+                margin: 1rem;
+                padding: 1.5rem;
+                max-height: 85vh;
+            }
+        }
+
+        /* Loading animation for dynamic content */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>🎸 Simon's Guitar Practice Generator</h1>
+        <p>Your complete AI-powered guitar practice suite</p>
+    </div>
+
+    <!-- Module Cards Grid -->
+    <div class="modules-container">
+        <div class="modules-grid">
+            <div class="module-card" onclick="openModule('tuner')">
+                <span class="module-icon">🎵</span>
+                <h3 class="module-title">AI Tuner Pro</h3>
+                <p class="module-description">Advanced guitar tuner with 
+flame effects, real-time pitch detection, and multiple tuning modes</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('stem')">
+                <span class="module-icon">🎛️</span>
+                <h3 class="module-title">Stem Separator Pro</h3>
+                <p class="module-description">Advanced AI stem separation 
+beyond 4 tracks - isolate guitar, vocals, bass, drums, and more with 
+studio quality</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('practice')">
+                <span class="module-icon">🎯</span>
+                <h3 class="module-title">Tom Hess Practice</h3>
+                <p class="module-description">AI-generated practice 
+routines based on Tom Hess methodologies, tailored to your skill level and 
+goals</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('fretboard')">
+                <span class="module-icon">🎸</span>
+                <h3 class="module-title">Interactive Fretboard</h3>
+                <p class="module-description">Songsterr-inspired fretboard 
+with advanced visualization for scales, chords, and song learning</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('vocal')">
+                <span class="module-icon">🎤</span>
+                <h3 class="module-title">Singer's Corner</h3>
+                <p class="module-description">Improve pitch accuracy, 
+rhythm, and timing with AI-powered vocal training and harmony 
+detection</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('songbuilder')">
+                <span class="module-icon">✍️</span>
+                <h3 class="module-title">Song Builder AI</h3>
+                <p class="module-description">Create complete songs from 
+lyrics or melody with AI assistance, chord progressions, and arrangement 
+tools</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('teacher')">
+                <span class="module-icon">👨‍🏫</span>
+                <h3 class="module-title">Teacher Portal</h3>
+                <p class="module-description">Structured lessons, progress 
+tracking, quizzes, and personalized feedback for students and 
+instructors</p>
+            </div>
+
+            <div class="module-card" onclick="openModule('tabs')">
+                <span class="module-icon">📝</span>
+                <h3 class="module-title">AI Tablature Pro</h3>
+                <p class="module-description">Multi-model AI tab 
+transcription with 95%+ accuracy, supporting complex techniques and 
+multiple guitars</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flame Tuner Pro Section -->
+    <div class="flame-tuner-section">
+        <h2>🔥 Flame Tuner Pro</h2>
+        <div class="guitar-visual">
+            <div class="strings">
+                <div class="string"></div>
+                <div class="string"></div>
+                <div class="string"></div>
+                <div class="string"></div>
+                <div class="string"></div>
+                <div class="string"></div>
+            </div>
+            <div class="flame active"></div>
+            <div class="flame active"></div>
+            <div class="flame active"></div>
+            <div class="flame active"></div>
+        </div>
+        <div class="tuner-controls">
+            <button class="btn primary" onclick="openTuner()">Start 
+Tuning</button>
+            <button class="btn" onclick="playReference()">Reference 
+Pitch</button>
+            <button class="btn" onclick="toggleFlames()">Toggle 
+Flames</button>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <h2>📊 Your Progress</h2>
+        <div class="progress-grid">
+            <div class="progress-item">
+                <h4>Practice Time Today</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="daily-progress" 
+style="width: 68%;"></div>
+                </div>
+                <p>42 minutes / 60 minute goal</p>
+            </div>
+            <div class="progress-item">
+                <h4>Weekly Goal</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="weekly-progress" 
+style="width: 45%;"></div>
+                </div>
+                <p>3 of 7 days completed</p>
+            </div>
+            <div class="progress-item">
+                <h4>Skill Level: Intermediate</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="skill-progress" 
+style="width: 72%;"></div>
+                </div>
+                <p>72% to Advanced level</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 Simon's Guitar Practice Generator - Powered by Advanced 
+AI</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Inspired by Tom 
+Hess • Moises • Songsterr • Studio One Pro</p>
+    </div>
+
+    <!-- Tuner Tab Panel -->
+    <div id="tuner-tab" class="tab-panel">
+        <div class="tab-content-wrapper">
+            <button class="close-tab" 
+onclick="closeTab()">&times;</button>
+            <div class="tuner-container">
+                <h2 style="color: #ff6b35; margin-bottom: 2rem;">🎵 
+Professional Tuner</h2>
+                
+                <div style="display: flex; gap: 1rem; justify-content: 
+center; margin-bottom: 2rem;">
+                    <button class="btn primary" 
+onclick="setTunerTheme('rock')" id="rock-theme">🔥 Rock</button>
+                    <button class="btn" onclick="setTunerTheme('country')" 
+id="country-theme">🤠 Country</button>
+                </div>
+
+                <div class="tuner-circle">
+                    <div class="tuner-needle" id="tuner-needle"></div>
+                    <div class="tuner-center"></div>
+                    <div class="flame-container" id="flame-container">
+                        <div class="tuner-flame"></div>
+                        <div class="tuner-flame"></div>
+                        <div class="tuner-flame"></div>
+                    </div>
+                </div>
+
+                <div class="note-display" id="note-display">Play a 
+note</div>
+                <div class="frequency-display" id="frequency-display">0 
+Hz</div>
+                <div class="tuner-status" id="tuner-status">Tuner 
+stopped</div>
+
+                <div style="display: flex; gap: 1rem; justify-content: 
+center; margin-top: 2rem;">
+                    <button class="btn primary" id="start-btn" 
+onclick="startTuner()">Start Tuning</button>
+                    <button class="btn" id="stop-btn" 
+onclick="stopTuner()" disabled>Stop Tuning</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Stem Separator Tab -->
+    <div id="stem-tab" class="tab-panel">
+        <div class="tab-content-wrapper" style="max-width: 700px;">
+            <button class="close-tab" 
+onclick="closeTab()">&times;</button>
+            <div style="color: white; padding: 1rem 0;">
+                <h2 style="color: #ff6b35; margin-bottom: 2rem; 
+text-align: center;">🎛️ AI Stem Separator Pro</h2>
+                
+                <!-- Upload Section -->
+                <div style="background: rgba(255,255,255,0.1); 
+border-radius: 15px; padding: 2rem; margin-bottom: 2rem; border: 2px 
+dashed rgba(255,107,53,0.5); text-align: center; cursor: pointer;" 
+onclick="uploadAudioFile()">
+                    <div style="font-size: 3rem; margin-bottom: 
+1rem;">🎵</div>
+                    <h3 style="color: #ff6b35; margin-bottom: 
+1rem;">Upload Your Track</h3>
+                    <p style="opacity: 0.8; margin-bottom: 1rem;">Drop 
+your audio file here or click to browse</p>
+                    <p style="font-size: 0.9rem; opacity: 0.6;">Supports 
+MP3, WAV, M4A, FLAC - AI will separate into 8+ tracks</p>
+                    <input type="file" id="audio-upload-input" 
+accept="audio/*" style="display: none;" 
+onchange="handleAudioUpload(event)">
+                </div>
+
+                <!-- Current Track Info -->
+                <div id="current-track-info" style="background: 
+rgba(255,255,255,0.05); border-radius: 15px; padding: 1.5rem; 
+margin-bottom: 2rem; display: none;">
+                    <h3 style="color: #ff6b35; margin-bottom: 1rem;">So 
+Tell Me Why</h3>
+                    <p style="opacity: 0.8; margin-bottom: 1rem;">Artist: 
+Unknown • Duration: 3:42</p>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 
+1rem;">
+                        <button class="btn primary" 
+onclick="startSeparation()">🤖 AI Separate</button>
+                        <button class="btn" 
+onclick="showSeparationOptions()">⚙️ Options</button>
+                    </div>
+                </div>
+
+                <!-- Separation Options -->
+                <div id="separation-options" style="background: 
+rgba(255,255,255,0.05); border-radius: 15px; padding: 1.5rem; 
+margin-bottom: 2rem; display: none;">
+                    <h3 style="color: #ff6b35; margin-bottom: 
+1.5rem;">Separation Options</h3>
+                    
+                    <!-- Basic Separation -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: white; margin-bottom: 
+1rem;">Basic separation</h4>
+                        <div style="background: rgba(255,255,255,0.1); 
+border-radius: 10px; padding: 1rem; margin-bottom: 0.5rem; cursor: 
+pointer; border: 2px solid rgba(255,107,53,0.5);" 
+onclick="selectSeparationType('basic')">
+                            <div style="display: flex; align-items: 
+center; gap: 1rem;">
+                                <span style="font-size: 1.5rem;">🎵</span>
+                                <div>
+                                    <div style="font-weight: 600;">Vocals, 
+Drums, Bass, Other</div>
+                                    <div style="font-size: 0.9rem; 
+opacity: 0.7;">4 Tracks</div>
+                                </div>
+                                <span style="margin-left: auto; color: 
+#27ae60;">✓</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); 
+border-radius: 10px; padding: 1rem; cursor: pointer;" 
+onclick="selectSeparationType('vocals')">
+                            <div style="display: flex; align-items: 
+center; gap: 1rem;">
+                                <span style="font-size: 1.5rem;">🎤</span>
+                                <div>
+                                    <div style="font-weight: 600;">Vocals, 
+Instrumental</div>
+                                    <div style="font-size: 0.9rem; 
+opacity: 0.7;">2 Tracks</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Separation -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: white; margin-bottom: 
+1rem;">Custom separation</h4>
+                        <div style="display: grid; gap: 0.5rem;">
+                            <div class="instrument-selector" 
+data-instrument="vocals" onclick="toggleInstrument(this)">
+                                <span style="font-size: 1.2rem;">🎤</span>
+                                <span>Vocals</span>
+                                <span class="instrument-toggle">✓</span>
+                            </div>
+                            <div class="instrument-selector" 
+data-instrument="guitar" onclick="toggleInstrument(this)">
+                                <span style="font-size: 1.2rem;">🎸</span>
+                                <span>Guitar</span>
+                                <span class="instrument-toggle">✓</span>
+                            </div>
+                            <div class="instrument-selector" 
+data-instrument="bass" onclick="toggleInstrument(this)">
+                                <span style="font-size: 1.2rem;">🎻</span>
+                                <span>Bass</span>
+                                <span class="instrument-toggle">○</span>
+                            </div>
+                            <div class="instrument-selector" 
+data-instrument="drums" onclick="toggleInstrument(this)">
+                                <span style="font-size: 1.2rem;">🥁</span>
+                                <span>Drums</span>
+                                <span class="instrument-toggle">✓</span>
+                            </div>
+                            <div class="instrument-selector" 
+data-instrument="piano" onclick="toggleInstrument(this)">
+                                <span style="font-size: 1.2rem;">🎹</span>
+                                <span>Piano</span>
+                                <span class="instrument-toggle">○</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HI-FI Toggle -->
+                    <div style="display: flex; align-items: center; 
+justify-content: space-between; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; 
+gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">⚡</span>
+                            <span style="font-weight: 600;">HI-FI</span>
+                        </div>
+                        <div class="toggle-switch active" 
+onclick="toggleHiFi()" id="hifi-toggle">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn primary" style="width: 100%;" 
+onclick="processWithOptions()">Update now</button>
+                </div>
+
+                <!-- Separated Tracks -->
+                <div id="separated-tracks" style="display: none;">
+                    <h3 style="color: #ff6b35; margin-bottom: 
+1.5rem;">Separated Tracks</h3>
+                    
+                    <!-- Track List -->
+                    <div style="display: grid; gap: 0.5rem;" 
+id="track-list">
+                        <!-- Tracks will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Playback Controls -->
+                    <div style="background: rgba(255,255,255,0.1); 
+border-radius: 15px; padding: 1.5rem; margin-top: 2rem;">
+                        <div style="display: flex; align-items: center; 
+justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                            <button class="btn" 
+onclick="previousSection()">⏮️</button>
+                            <button class="btn primary" 
+onclick="togglePlayback()" id="play-btn">▶️</button>
+                            <button class="btn" 
+onclick="nextSection()">⏭️</button>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div style="display: flex; align-items: center; 
+gap: 1rem;">
+                            <span style="font-size: 0.9rem;">0:00</span>
+                            <div style="flex: 1; height: 4px; background: 
+rgba(255,255,255,0.2); border-radius: 2px; position: relative;">
+                                <div style="height: 100%; background: 
+#ff6b35; border-radius: 2px; width: 25%;"></div>
+                            </div>
+                            <span style="font-size: 0.9rem;">-3:17</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Element -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global Variables
+        let audioContext, analyser, microphone, dataArray;
+        let isListening = false, animationId;
+        let tunerTheme = 'rock';
+        let currentCalibration = 440;
+
+        // Note frequencies (in Hz)
+        const noteFrequencies = {
+            'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13, 'E': 
+329.63,
+            'F': 349.23, 'F#': 369.99, 'G': 392.00, 'G#': 415.30, 'A': 
+440.00,
+            'A#': 466.16, 'B': 493.88
+        };
+        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 
+'G#', 'A', 'A#', 'B'];
+
+        // PWA Manifest generation
+        const manifest = {
+            name: "Simon's Guitar Practice Generator",
+            short_name: "Guitar Practice Pro",
+            description: "Complete AI-powered guitar practice suite",
+            start_url: "/",
+            display: "standalone",
+            background_color: "#1a1a2e",
+            theme_color: "#ff6b35",
+            orientation: "portrait-primary",
+            icons: [
+                {
+                    src: "data:image/svg+xml,<svg 
+xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' 
+height='192' fill='%23ff6b35'/><text y='130' font-size='100' 
+text-anchor='middle' x='96' fill='white'>🎸</text></svg>",
+                    sizes: "192x192",
+                    type: "image/svg+xml"
+                }
+            ]
+        };
+
+        // Module Management
+        function openModule(module) {
+            if (module === 'tuner') {
+                openTuner();
+            } else if (module === 'stem') {
+                openStemSeparator();
+            } else {
+                showNotification(`🎵 Opening ${module} module - Advanced 
+features coming soon!`);
+            }
+        }
+
+        function openStemSeparator() {
+            document.getElementById('stem-tab').classList.add('active');
+        }
+
+        function openTuner() {
+            document.getElementById('tuner-tab').classList.add('active');
+        }
+
+        function closeTab() {
+            document.querySelectorAll('.tab-panel').forEach(tab => 
+tab.classList.remove('active'));
+            if (isListening) stopTuner();
+        }
+
+        // Tuner Theme Management
+        function setTunerTheme(theme) {
+            tunerTheme = theme;
+            document.querySelectorAll('#tuner-tab .btn').forEach(btn => 
+btn.classList.remove('primary'));
+            document.getElementById(theme + 
+'-theme').classList.add('primary');
+            
+            if (theme === 'rock') {
+                showNotification('🔥 Rock mode activated! Get ready to 
+shred!');
+            } else if (theme === 'country') {
+                showNotification('🤠 Country mode activated! Time to 
+strum!');
+            }
+        }
+
+        // Tuner Functions
+        async function startTuner() {
+            try {
+                document.getElementById('start-btn').innerHTML = '<span 
+style="display: inline-block; margin-right: 
+0.5rem;">🔄</span>Starting...';
+                document.getElementById('start-btn').disabled = true;
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false
+                    } 
+                });
+                
+                audioContext = new (window.AudioContext || 
+window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                
+                analyser.fftSize = 8192;
+                analyser.smoothingTimeConstant = 0.8;
+                microphone.connect(analyser);
+                
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                isListening = true;
+                
+                document.getElementById('start-btn').innerHTML = 'Stop 
+Tuning';
+                document.getElementById('start-btn').disabled = false;
+                
+document.getElementById('start-btn').classList.remove('primary');
+                document.getElementById('stop-btn').disabled = false;
+                document.getElementById('tuner-status').textContent = 
+'Listening...';
+                
+                showNotification('🎵 Tuner started! Play a note on your 
+guitar.');
+                detectPitch();
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                document.getElementById('start-btn').innerHTML = 'Start 
+Tuning';
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('tuner-status').textContent = 
+'Microphone access denied';
+                document.getElementById('tuner-status').className = 
+'tuner-status status-sharp';
+                showNotification('❌ Microphone access denied. Please 
+allow microphone access.');
+            }
+        }
+
+        function stopTuner() {
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            isListening = false;
+            document.getElementById('start-btn').innerHTML = 'Start 
+Tuning';
+            document.getElementById('start-btn').classList.add('primary');
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            document.getElementById('tuner-status').textContent = 'Tuner 
+stopped';
+            document.getElementById('tuner-status').className = 
+'tuner-status';
+            document.getElementById('note-display').textContent = 'Play a 
+note';
+            document.getElementById('frequency-display').textContent = '0 
+Hz';
+            document.getElementById('tuner-needle').style.transform = 
+'translateX(-50%) rotate(0deg)';
+            
+document.getElementById('flame-container').classList.remove('active');
+            
+            showNotification('🎵 Tuner stopped.');
+        }
+
+        function detectPitch() {
+            if (!isListening) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            let maxAmplitude = 0;
+            let maxIndex = 0;
+            
+            for (let i = 0; i < dataArray.length; i++) {
+                if (dataArray[i] > maxAmplitude) {
+                    maxAmplitude = dataArray[i];
+                    maxIndex = i;
+                }
+            }
+            
+            const frequency = (maxIndex * audioContext.sampleRate) / 
+(analyser.fftSize * 2);
+            
+            if (maxAmplitude > 50 && frequency > 80 && frequency < 2000) {
+                updateTunerDisplay(frequency);
+            }
+            
+            animationId = requestAnimationFrame(detectPitch);
+        }
+
+        function updateTunerDisplay(frequency) {
+            let closestNote = 'A';
+            let closestFreq = noteFrequencies['A'] * (currentCalibration / 
+440);
+            let minDiff = Math.abs(frequency - closestFreq);
+            
+            // Check all octaves
+            for (let octave = 1; octave <= 7; octave++) {
+                for (const note of noteNames) {
+                    const noteFreq = noteFrequencies[note] * Math.pow(2, 
+octave - 4) * (currentCalibration / 440);
+                    const diff = Math.abs(frequency - noteFreq);
+                    
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestNote = note;
+                        closestFreq = noteFreq;
+                    }
+                }
+            }
+            
+            const cents = Math.round(1200 * Math.log2(frequency / 
+closestFreq));
+            
+            // Update display
+            document.getElementById('note-display').textContent = 
+closestNote;
+            document.getElementById('frequency-display').textContent = 
+`${frequency.toFixed(1)} Hz`;
+            
+            // Update needle position
+            const needleAngle = Math.max(-45, Math.min(45, cents * 1.5));
+            document.getElementById('tuner-needle').style.transform = 
+`translateX(-50%) rotate(${needleAngle}deg)`;
+            
+            // Update status and effects
+            const statusElement = document.getElementById('tuner-status');
+            const flameContainer = 
+document.getElementById('flame-container');
+            
+            if (Math.abs(cents) <= 5) {
+                statusElement.textContent = 'IN TUNE! 🔥';
+                statusElement.className = 'tuner-status status-tuned';
+                flameContainer.classList.add('active');
+                playTuneSound();
+            } else if (cents > 5) {
+                statusElement.textContent = 'SHARP ↗';
+                statusElement.className = 'tuner-status status-sharp';
+                flameContainer.classList.remove('active');
+            } else {
+                statusElement.textContent = 'FLAT ↙';
+                statusElement.className = 'tuner-status status-flat';
+                flameContainer.classList.remove('active');
+            }
+        }
+
+        let lastTuneTime = 0;
+        function playTuneSound() {
+            const now = Date.now();
+            if (now - lastTuneTime > 2000) { // Only play once per 2 
+seconds
+                lastTuneTime = now;
+                
+                if (audioContext && audioContext.state === 'running') {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    if (tunerTheme === 'rock') {
+                        // Rock guitar squeal
+                        oscillator.frequency.setValueAtTime(800, 
+audioContext.currentTime);
+                        
+oscillator.frequency.exponentialRampToValueAtTime(1200, 
+audioContext.currentTime + 0.3);
+                        oscillator.type = 'square';
+                    } else {
+                        // Country guitar chuck
+                        oscillator.frequency.setValueAtTime(300, 
+audioContext.currentTime);
+                        oscillator.type = 'sawtooth';
+                    }
+                    
+                    gainNode.gain.setValueAtTime(0.1, 
+audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, 
+audioContext.currentTime + 0.5);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                }
+            }
+        }
+
+        function playReference() {
+            if (typeof AudioContext !== 'undefined' || typeof 
+webkitAudioContext !== 'undefined') {
+                const audioCtx = new (AudioContext || 
+webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.frequency.setValueAtTime(currentCalibration, 
+audioCtx.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, 
+audioCtx.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, 
+audioCtx.currentTime + 1);
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 1);
+                
+                showNotification(`🎵 Playing reference tone: 
+${currentCalibration}Hz (A4)`);
+            }
+        }
+
+        function toggleFlames() {
+            const flames = document.querySelectorAll('.flame-tuner-section 
+.flame');
+            flames.forEach(flame => {
+                flame.classList.toggle('active');
+            });
+            showNotification('🔥 Flame effects toggled!');
+        }
+
+        // Advanced Stem Separator Functions
+        let selectedInstruments = ['vocals', 'guitar', 'drums'];
+        let hiFiEnabled = true;
+        let separationInProgress = false;
+
+        function uploadAudioFile() {
+            document.getElementById('audio-upload-input').click();
+        }
+
+        function handleAudioUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                showNotification(`🎵 Uploading "${file.name}"...`);
+                
+document.getElementById('current-track-info').style.display = 'block';
+                
+                // Update track info
+                const trackName = file.name.replace(/\.[^/.]+$/, "");
+                document.querySelector('#current-track-info 
+h3').textContent = trackName;
+                
+                setTimeout(() => {
+                    showNotification('✅ Upload complete! Ready for AI 
+separation.');
+                }, 2000);
+            }
+        }
+
+        function showSeparationOptions() {
+            document.getElementById('separation-options').style.display = 
+'block';
+        }
+
+        function selectSeparationType(type) {
+            // Remove active state from all options
+            document.querySelectorAll('#separation-options > div > 
+div').forEach(div => {
+                div.style.border = '1px solid rgba(255,255,255,0.1)';
+            });
+            
+            // Add active state to selected option
+            event.currentTarget.style.border = '2px solid 
+rgba(255,107,53,0.5)';
+            
+            if (type === 'basic') {
+                selectedInstruments = ['vocals', 'drums', 'bass', 
+'other'];
+                showNotification('🎵 Basic separation selected: 4 
+tracks');
+            } else if (type === 'vocals') {
+                selectedInstruments = ['vocals', 'instrumental'];
+                showNotification('🎤 Vocals/Instrumental separation 
+selected: 2 tracks');
+            }
+        }
+
+        function toggleInstrument(element) {
+            const instrument = element.dataset.instrument;
+            const toggle = element.querySelector('.instrument-toggle');
+            
+            if (selectedInstruments.includes(instrument)) {
+                selectedInstruments = selectedInstruments.filter(i => i 
+!== instrument);
+                toggle.textContent = '○';
+                toggle.classList.add('inactive');
+                element.classList.remove('active');
+            } else {
+                selectedInstruments.push(instrument);
+                toggle.textContent = '✓';
+                toggle.classList.remove('inactive');
+                element.classList.add('active');
+            }
+            
+            showNotification(`🎵 ${instrument} 
+${selectedInstruments.includes(instrument) ? 'added to' : 'removed from'} 
+separation`);
+        }
+
+        function toggleHiFi() {
+            const toggle = document.getElementById('hifi-toggle');
+            hiFiEnabled = !hiFiEnabled;
+            
+            if (hiFiEnabled) {
+                toggle.classList.add('active');
+                showNotification('⚡ HI-FI mode enabled - Enhanced quality 
+processing');
+            } else {
+                toggle.classList.remove('active');
+                showNotification('⚡ HI-FI mode disabled - Faster 
+processing');
+            }
+        }
+
+        function startSeparation() {
+            if (separationInProgress) return;
+            
+            separationInProgress = true;
+            showNotification('🤖 AI separation started...');
+            
+            // Hide options and show progress
+            document.getElementById('separation-options').style.display = 
+'none';
+            document.getElementById('current-track-info').style.display = 
+'none';
+            
+            // Simulate AI processing
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    completeSeparation();
+                }
+                showNotification(`🤖 AI Processing: 
+${Math.round(progress)}%`);
+            }, 800);
+        }
+
+        function processWithOptions() {
+            showNotification(`🤖 Processing with 
+${selectedInstruments.length} instruments, HI-FI: ${hiFiEnabled ? 'ON' : 
+'OFF'}`);
+            startSeparation();
+        }
+
+        function completeSeparation() {
+            separationInProgress = false;
+            document.getElementById('separated-tracks').style.display = 
+'block';
+            
+            // Generate track list based on selected instruments
+            const trackList = document.getElementById('track-list');
+            trackList.innerHTML = '';
+            
+            const trackData = {
+                vocals: { icon: '🎤', name: 'Vocals', artist: 'Lead 
+Vocals', color: '#ff6b35' },
+                guitar: { icon: '🎸', name: 'Electric Guitar (clean)', 
+artist: 'James Hetfield | ESP...', color: '#27ae60' },
+                drums: { icon: '🥁', name: 'Drums', artist: 'Full Kit', 
+color: '#3498db' },
+                bass: { icon: '🎻', name: 'Bass', artist: 'Electric Bass', 
+color: '#9b59b6' },
+                piano: { icon: '🎹', name: 'Piano', artist: 'Grand Piano', 
+color: '#e74c3c' },
+                other: { icon: '🎵', name: 'Other', artist: 'Background', 
+color: '#95a5a6' },
+                instrumental: { icon: '🎼', name: 'Instrumental', artist: 
+'All instruments', color: '#34495e' }
+            };
+            
+            selectedInstruments.forEach(instrument => {
+                if (trackData[instrument]) {
+                    const track = trackData[instrument];
+                    const trackElement = document.createElement('div');
+                    trackElement.className = 'track-item';
+                    trackElement.innerHTML = `
+                        <span class="track-icon" style="color: 
+${track.color}">${track.icon}</span>
+                        <div style="flex: 1;">
+                            <div class="track-name" style="color: 
+${track.color}">${track.name}</div>
+                            <div 
+class="track-artist">${track.artist}</div>
+                        </div>
+                        <div class="track-controls">
+                            <button class="btn" style="padding: 0.5rem; 
+background: rgba(255,255,255,0.1);" 
+onclick="toggleTrackSolo('${instrument}')">🎧</button>
+                            <button class="btn" style="padding: 0.5rem; 
+background: rgba(255,255,255,0.1);" 
+onclick="toggleTrackMute('${instrument}')">🔊</button>
+                        </div>
+                    `;
+                    trackList.appendChild(trackElement);
+                }
+            });
+            
+            showNotification('🎉 Separation complete! All tracks ready for 
+playback.');
+        }
+
+        function toggleTrackSolo(instrument) {
+            showNotification(`🎧 Solo ${instrument} track`);
+        }
+
+        function toggleTrackMute(instrument) {
+            showNotification(`🔊 Toggle ${instrument} mute`);
+        }
+
+        function togglePlayback() {
+            const playBtn = document.getElementById('play-btn');
+            if (playBtn.textContent === '▶️') {
+                playBtn.textContent = '⏸️';
+                showNotification('▶️ Playing separated tracks');
+            } else {
+                playBtn.textContent = '▶️';
+                showNotification('⏸️ Playback paused');
+            }
+        }
+
+        function previousSection() {
+            showNotification('⏮️ Previous section');
+        }
+
+        function nextSection() {
+            showNotification('⏭️ Next section');
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Simon\'s Guitar Practice Generator Pro loaded 
+successfully!');
+            
+            // Update progress bars on load
+            setTimeout(() => {
+                document.getElementById('daily-progress').style.width = 
+'68%';
+                document.getElementById('weekly-progress').style.width = 
+'45%';
+                document.getElementById('skill-progress').style.width = 
+'72%';
+            }, 1000);
+            
+            // Add some interactive hover effects
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) 
+scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Close tab when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('tab-panel')) {
+                    closeTab();
+                }
+            });
+            
+            // Welcome message
+            setTimeout(() => {
+                showNotification('🎸 Welcome to Guitar Practice Pro! Click 
+any module to get started.');
+            }, 1500);
+        });
+
+        // Prevent default touch behaviors for better mobile experience
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.tab-panel')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
+
